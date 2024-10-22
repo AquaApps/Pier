@@ -4,21 +4,26 @@ import (
 	"Pier/common"
 	"context"
 	"io"
+	"runtime"
 )
 
-func writer(stream io.Writer, out <-chan []byte, ctx context.Context) {
+func writer(stream io.Writer, out *io.Reader, ctx context.Context) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+	buffer := make([]byte, 4*1024*1024)
 	for common.Opened(ctx) {
-		_, _ = stream.Write(<-out)
+		_, _ = io.CopyBuffer(stream, *out, buffer)
 	}
 }
 
-func reader(stream io.Reader, in chan<- []byte, ctx context.Context) {
-	packet := make([]byte, 4*1024)
+func reader(stream io.Reader, in *io.Writer, ctx context.Context) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+	buffer := make([]byte, 4*1024*1024)
 	for common.Opened(ctx) {
-		num, err := stream.Read(packet)
+		_, err := io.CopyBuffer(*in, stream, buffer)
 		if err != nil {
 			return
 		}
-		in <- packet[:num]
 	}
 }
