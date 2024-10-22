@@ -3,7 +3,6 @@ package service
 import (
 	"Pier/core/tunnel"
 	"fmt"
-	"github.com/inhies/go-bytesize"
 	"io"
 	"net/http"
 	"runtime"
@@ -31,15 +30,15 @@ func StartHttpServer(port int, serviceKey string, device *tunnel.Device) error {
 		runtime.Gosched()
 	})
 
-	http.HandleFunc("/state", func(w http.ResponseWriter, r *http.Request) {
-		if !checkPermission(w, r, serviceKey) {
-			return
-		}
-		read, write := device.GetReadWriteBytes()
-		resp := fmt.Sprintf("read %v write %v", bytesize.New(float64(read)).String(), bytesize.New(float64(write)).String())
-		_, _ = io.WriteString(w, resp)
-		runtime.Gosched()
-	})
+	//http.HandleFunc("/state", func(w http.ResponseWriter, r *http.Request) {
+	//	if !checkPermission(w, r, serviceKey) {
+	//		return
+	//	}
+	//	read, write := device.GetReadWriteBytes()
+	//	resp := fmt.Sprintf("read %v write %v", bytesize.New(float64(read)).String(), bytesize.New(float64(write)).String())
+	//	_, _ = io.WriteString(w, resp)
+	//	runtime.Gosched()
+	//})
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
 		return err
 	}
