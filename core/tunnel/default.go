@@ -44,13 +44,8 @@ func (device *Device) Init(mName, mCIDRv4 string, ctx context.Context) error {
 	return nil
 }
 
-func (device *Device) OpenChannel() (*io.Reader, *io.Writer) {
-	var reader io.Reader
-	var writer io.Writer
-	reader = device._f
-	writer = device._f
-
-	return &reader, &writer
+func (device *Device) OpenChannel() (io.Reader, io.Writer) {
+	return device._f, device._f
 }
 
 func (device *Device) Destroy() {
