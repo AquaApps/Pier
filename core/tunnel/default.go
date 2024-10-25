@@ -3,6 +3,7 @@ package tunnel
 import (
 	"context"
 	"sync/atomic"
+	"time"
 
 	//"log"
 	"net"
@@ -38,8 +39,8 @@ func (device *Device) Init(mName, mCIDRv4 string, ctx context.Context) error {
 
 	device._totalReadBytes = new(uint64)
 	device._totalWrittenBytes = new(uint64)
-	device._inputStream = make(chan []byte)
-	device._outputStream = make(chan []byte)
+	device._inputStream = make(chan []byte, 0x20)
+	device._outputStream = make(chan []byte, 0x20)
 	if f, err := openTunDeviceWithIP(device.Name, device.CIDRv4, MTU); err != nil {
 		return err
 	} else {
@@ -63,6 +64,8 @@ func (device *Device) GetReadWriteBytes() (uint64, uint64) {
 }
 func (device *Device) Destroy() {
 	device._cancelFunc()
+	timer := time.NewTimer(2 * time.Second)
+	<-timer.C
 	close(device._inputStream)
 	close(device._outputStream)
 	closeTunDevice(device._f)

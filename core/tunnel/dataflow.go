@@ -7,7 +7,7 @@ import (
 
 func (device *Device) readFromTunnel() {
 	fun := device._interceptFunc
-	packet := make([]byte, 4*1024)
+	packet := make([]byte, 64*1024)
 	for common.Opened(device._life) {
 		num, _ := device._f.Read(packet)
 		device.incrWrittenBytes(num)

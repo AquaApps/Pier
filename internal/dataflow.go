@@ -13,7 +13,7 @@ func writer(stream io.Writer, out <-chan []byte, ctx context.Context) {
 }
 
 func reader(stream io.Reader, in chan<- []byte, ctx context.Context) {
-	packet := make([]byte, 4*1024)
+	packet := make([]byte, 64*1024)
 	for common.Opened(ctx) {
 		num, err := stream.Read(packet)
 		if err != nil {
