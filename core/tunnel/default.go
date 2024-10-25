@@ -63,5 +63,7 @@ func (device *Device) GetReadWriteBytes() (uint64, uint64) {
 
 func (device *Device) Destroy() {
 	device._cancelFunc()
+	close(device._inputStream)
+	close(device._outputStream)
 	closeTunDevice(device._f)
 }

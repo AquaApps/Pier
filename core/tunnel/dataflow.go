@@ -2,13 +2,10 @@ package tunnel
 
 import (
 	"Pier/common"
-	"runtime"
 	"sync/atomic"
 )
 
 func (device *Device) readFromTunnel() {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
 	fun := device._interceptFunc
 	packet := make([]byte, 4*1024)
 	for common.Opened(device._life) {
@@ -19,8 +16,6 @@ func (device *Device) readFromTunnel() {
 }
 
 func (device *Device) writeToTunnel() {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
 	fun := device._interceptFunc
 	for common.Opened(device._life) {
 		n, _ := device._f.Write(fun(<-device._inputStream))
